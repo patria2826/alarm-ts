@@ -41,7 +41,10 @@ function handleEvent(event) {
             replyText = `你剛剛說：「${event.message.text}」`;
             break;
     }
-    const echo = { type: "text", text: replyText };
+    const echo = {
+        type: "text",
+        text: `你剛剛說：「${event.message.text}」`
+    };
     // use reply API
     return client.replyMessage(event.replyToken, echo);
 }

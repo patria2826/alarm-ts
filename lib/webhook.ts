@@ -54,7 +54,10 @@ function handleEvent(event: line.WebhookEvent) {
       break;
   }
 
-  const echo: line.TextMessage = { type: "text", text: replyText };
+  const echo: line.TextMessage = {
+    type: "text",
+    text: `你剛剛說：「${event.message.text}」`
+  };
 
   // use reply API
   return client.replyMessage(event.replyToken, echo);
