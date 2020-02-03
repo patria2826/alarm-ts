@@ -6,7 +6,7 @@ let logger = require("morgan");
 
 let indexRouter = require("./routes/index");
 let usersRouter = require("./routes/users");
-let webhookRouter = require("./routes/webhook");
+let webhookRouter = require("./temp/webhook.js");
 
 let app = express();
 
