@@ -1,5 +1,6 @@
 import * as line from "@line/bot-sdk";
 import * as express from "express";
+import * as puppeteer from "puppeteer";
 
 const config: line.Config = {
   channelAccessToken:
@@ -62,4 +63,34 @@ function handleEvent(event: line.WebhookEvent) {
   return client.replyMessage(event.replyToken, echo);
 }
 
+// crawler
+const url = process.argv[2];
+if (!url) {
+  throw "Please provide a URL as the first argument";
+}
+
+async function latestNews() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.goto("https://granbluefantasy.jp/news/index.php");
+      let urls = await page.evaluate(() => {
+        let results: any[] = [];
+        let items = document.querySelectorAll("a.change_news_trigger");
+        items.forEach((item: HTMLElement) => {
+          results.push({
+            url: item.getAttribute("href"),
+            text: item.innerText
+          });
+        });
+        return results;
+      });
+      browser.close();
+      return resolve(urls);
+    } catch (e) {
+      return reject(e);
+    }
+  });
+}
 module.exports = app;
