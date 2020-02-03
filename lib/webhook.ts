@@ -1,6 +1,5 @@
 import * as line from "@line/bot-sdk";
 import * as express from "express";
-let router = express.Router();
 
 const config: line.Config = {
   channelAccessToken:
@@ -56,11 +55,11 @@ function handleEvent(event: line.WebhookEvent) {
 
   const echo: line.TextMessage = {
     type: "text",
-    text: `你剛剛說：「${event.message.text}」`
+    text: replyText
   };
 
   // use reply API
   return client.replyMessage(event.replyToken, echo);
 }
 
-module.exports = router;
+module.exports = app;
