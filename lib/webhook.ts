@@ -43,7 +43,18 @@ function handleEvent(event: line.WebhookEvent) {
   console.log(`Received message: ${event.message.text}`);
 
   // create a echoing text message
-  const echo: line.TextMessage = { type: "text", text: event.message.text };
+  let replyText: string;
+
+  switch (event.message.text.toUpperCase()) {
+    case "SSR":
+      replyText = "https://gbfssrlistbyod.memo.wiki/";
+      break;
+    default:
+      replyText = `你剛剛說：「${event.message.text}」`;
+      break;
+  }
+
+  const echo: line.TextMessage = { type: "text", text: replyText };
 
   // use reply API
   return client.replyMessage(event.replyToken, echo);
