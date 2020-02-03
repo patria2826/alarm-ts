@@ -64,11 +64,6 @@ function handleEvent(event: line.WebhookEvent) {
 }
 
 // crawler
-const url = process.argv[2];
-if (!url) {
-  throw "Please provide a URL as the first argument";
-}
-
 async function latestNews() {
   return new Promise(async (resolve, reject) => {
     try {
@@ -77,19 +72,32 @@ async function latestNews() {
       await page.goto("https://granbluefantasy.jp/news/index.php");
       let urls = await page.evaluate(() => {
         let results: any[] = [];
-        let items = document.querySelectorAll("a.change_news_trigger");
-        items.forEach((item: HTMLElement) => {
-          results.push({
-            url: item.getAttribute("href"),
-            text: item.innerText
-          });
-        });
+        let items = document.querySelectorAll("article.scroll_show_box");
+        items.forEach(
+          (item: HTMLElement, key: number, parent: NodeListOf<Element>) => {
+            if (item.dataset["page"] === "1") {
+              results.push({
+                url: item.children
+                  .item(1)
+                  .children.item(0)
+                  .children.item(1)
+                  .children.item(0)
+                  .getAttribute("href"),
+                text: item.children
+                  .item(1)
+                  .children.item(0)
+                  .children.item(1)
+                  .children.item(0).textContent
+              });
+            }
+          }
+        );
         return results;
       });
       browser.close();
       return resolve(urls);
-    } catch (e) {
-      return reject(e);
+    } catch (err) {
+      return reject(err);
     }
   });
 }

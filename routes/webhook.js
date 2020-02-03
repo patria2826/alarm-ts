@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const line = require("@line/bot-sdk");
 const express = require("express");
+const puppeteer = require("puppeteer");
 const config = {
     channelAccessToken: "8PH4V0u0FvfPEm/yQ9NZB61U1EUD01jtZnrfno5tAY41X2xkqe6f/qWjLwlTnPgWJe+YHtNCE0Efgn3cd6JUcXSU7fJhCTnJA4DY/NXs1cBSVd5iybyneAjCI/2qaBZPyAS/VuD2hQzVN6vNhF6c6wdB04t89/1O/w1cDnyilFU=",
     channelSecret: "71452c617aba78afb206fe9b2f61ad74"
@@ -46,5 +47,42 @@ function handleEvent(event) {
     };
     // use reply API
     return client.replyMessage(event.replyToken, echo);
+}
+// crawler
+async function latestNews() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const browser = await puppeteer.launch();
+            const page = await browser.newPage();
+            await page.goto("https://granbluefantasy.jp/news/index.php");
+            let urls = await page.evaluate(() => {
+                let results = [];
+                let items = document.querySelectorAll("article.scroll_show_box");
+                items.forEach((item, key, parent) => {
+                    if (item.dataset["page"] === "1") {
+                        results.push({
+                            url: item.children
+                                .item(1)
+                                .children.item(0)
+                                .children.item(1)
+                                .children.item(0)
+                                .getAttribute("href"),
+                            text: item.children
+                                .item(1)
+                                .children.item(0)
+                                .children.item(1)
+                                .children.item(0).textContent
+                        });
+                    }
+                });
+                return results;
+            });
+            browser.close();
+            return resolve(urls);
+        }
+        catch (err) {
+            return reject(err);
+        }
+    });
 }
 module.exports = app;
