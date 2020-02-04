@@ -36,20 +36,23 @@ function handleEvent(event) {
     switch (event.message.text.toUpperCase()) {
         case "SSR":
             echo = {
-                type: "text",
-                text: "https://gbfssrlistbyod.memo.wiki/"
+                type: "template",
+                altText: "https://gbfssrlistbyod.memo.wiki/",
+                template: {
+                    type: "buttons",
+                    text: "GBF SSR 腳色",
+                    title: "GBF SSR 腳色",
+                    actions: [{ type: "uri", label: "", uri: "" }]
+                }
             };
             return client.replyMessage(event.replyToken, echo);
         case "NEWS" || "公告":
-            let newsColumn;
             let newsCard;
             return getGBFLatestNews()
                 .then((result) => {
                 return result;
             })
                 .then((dataList) => {
-                console.log("dataList", dataList);
-                newsColumn = [];
                 newsCard = [];
                 dataList.forEach(data => {
                     newsCard.push({
@@ -119,18 +122,6 @@ function handleEvent(event) {
                             uri: data.url
                         }
                     });
-                    // newsColumn.push({
-                    //   thumbnailImageUrl: data.thumbnailImg,
-                    //   imageBackgroundColor: "#FFFFFF",
-                    //   actions: [
-                    //     {
-                    //       type: "uri",
-                    //       label: "続きを読む",
-                    //       uri: data.url
-                    //     }
-                    //   ],
-                    //   text: data.text
-                    // });
                 });
             })
                 .then(() => {
@@ -142,14 +133,6 @@ function handleEvent(event) {
                         contents: newsCard
                     }
                 };
-                //   echo = {
-                //     type: "template",
-                //     altText: "GBF News",
-                //     template: {
-                //       type: "carousel",
-                //       columns: newsColumn
-                //     }
-                //   };
             })
                 .finally(() => client.replyMessage(event.replyToken, echo));
         default:
@@ -161,15 +144,13 @@ function handleEvent(event) {
     }
 }
 // GBF crawler
-const newsUrl = "https://granbluefantasy.jp/news/index.php";
 function getGBFLatestNews() {
     return new Promise(async (resolve, reject) => {
         try {
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
-            // const newsUrl = "https://granbluefantasy.jp/news/index.php";
+            const newsUrl = "https://granbluefantasy.jp/news/index.php";
             await page.goto(newsUrl);
-            //   await page.goto("https://granbluefantasy.jp/news/index.php");
             let urls = await page.evaluate(() => {
                 let results = [];
                 let items = document.querySelectorAll("article.scroll_show_box");
@@ -204,6 +185,40 @@ function getGBFLatestNews() {
                         });
                     }
                 });
+                return results;
+            });
+            browser.close();
+            return resolve(urls);
+        }
+        catch (err) {
+            return reject(err);
+        }
+    });
+}
+function gbfSSRList() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const browser = await puppeteer.launch();
+            const page = await browser.newPage();
+            const ssrListUrl = "https://gbfssrlistbyod.memo.wiki/";
+            await page.goto(ssrListUrl);
+            let urls = await page.evaluate(() => {
+                let results = [];
+                let items = document.querySelector("ul#362777_block_5").children;
+                for (let i = 1; i < items.length; i++) {
+                    results.push({
+                        url: items.item(i).getAttribute("href"),
+                        text: items
+                            .item(i)
+                            .children.item(0)
+                            .getAttribute("innerText"),
+                        thumbnailImg: items
+                            .item(i)
+                            .children.item(0)
+                            .children.item(0)
+                            .getAttribute("src")
+                    });
+                }
                 return results;
             });
             browser.close();
