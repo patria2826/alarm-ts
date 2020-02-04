@@ -51,8 +51,12 @@ function handleEvent(event: line.WebhookEvent) {
       break;
     case "NEWS" || "公告":
       getGBFlatestNews()
-        .then(response => (replyText = JSON.stringify(response)))
-        .catch(err => (replyText = err));
+        .then(() => {
+          replyText = "yaya";
+        })
+        .catch(err => {
+          replyText = "err";
+        });
       break;
     default:
       replyText = `你剛剛說：「${event.message.text}」`;
