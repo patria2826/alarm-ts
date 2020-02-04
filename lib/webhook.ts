@@ -9,6 +9,12 @@ interface IGBFNews {
   date: string;
 }
 
+interface IGBFSSRList {
+  url: string;
+  text: string;
+  thumbnailImg: string;
+}
+
 const config: line.Config = {
   channelAccessToken:
     "8PH4V0u0FvfPEm/yQ9NZB61U1EUD01jtZnrfno5tAY41X2xkqe6f/qWjLwlTnPgWJe+YHtNCE0Efgn3cd6JUcXSU7fJhCTnJA4DY/NXs1cBSVd5iybyneAjCI/2qaBZPyAS/VuD2hQzVN6vNhF6c6wdB04t89/1O/w1cDnyilFU=",
@@ -55,21 +61,24 @@ function handleEvent(event: line.WebhookEvent) {
   switch (event.message.text.toUpperCase()) {
     case "SSR":
       echo = {
-        type: "text",
-        text: "https://gbfssrlistbyod.memo.wiki/"
+        type: "template",
+        altText: "https://gbfssrlistbyod.memo.wiki/",
+        template: {
+          type: "buttons",
+          text: "GBF SSR 腳色",
+          title: "GBF SSR 腳色",
+          actions: [{ type: "uri", label: "", uri: "" }]
+        }
       };
       return client.replyMessage(event.replyToken, echo);
 
     case "NEWS" || "公告":
-      let newsColumn: line.TemplateColumn[];
       let newsCard: line.FlexBubble[];
       return getGBFLatestNews()
         .then((result: any[]) => {
           return result;
         })
         .then((dataList: IGBFNews[]) => {
-          // console.log("dataList", dataList);
-          newsColumn = [];
           newsCard = [];
           dataList.forEach(data => {
             newsCard.push({
@@ -139,18 +148,6 @@ function handleEvent(event: line.WebhookEvent) {
                 uri: data.url
               }
             });
-            // newsColumn.push({
-            //   thumbnailImageUrl: data.thumbnailImg,
-            //   imageBackgroundColor: "#FFFFFF",
-            //   actions: [
-            //     {
-            //       type: "uri",
-            //       label: "続きを読む",
-            //       uri: data.url
-            //     }
-            //   ],
-            //   text: data.text
-            // });
           });
         })
         .then(() => {
@@ -162,14 +159,6 @@ function handleEvent(event: line.WebhookEvent) {
               contents: newsCard
             }
           };
-          //   echo = {
-          //     type: "template",
-          //     altText: "GBF News",
-          //     template: {
-          //       type: "carousel",
-          //       columns: newsColumn
-          //     }
-          //   };
         })
         .finally(() => client.replyMessage(event.replyToken, echo));
     default:
@@ -226,6 +215,40 @@ function getGBFLatestNews() {
             }
           }
         );
+        return results;
+      });
+      browser.close();
+      return resolve(urls);
+    } catch (err) {
+      return reject(err);
+    }
+  });
+}
+
+function gbfSSRList() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      const ssrListUrl = "https://gbfssrlistbyod.memo.wiki/";
+      await page.goto(ssrListUrl);
+      let urls = await page.evaluate(() => {
+        let results: IGBFSSRList[] = [];
+        let items = document.querySelector("ul#362777_block_5").children;
+        for (let i = 1; i < items.length; i++) {
+          results.push({
+            url: items.item(i).getAttribute("href"),
+            text: items
+              .item(i)
+              .children.item(0)
+              .getAttribute("innerText"),
+            thumbnailImg: items
+              .item(i)
+              .children.item(0)
+              .children.item(0)
+              .getAttribute("src")
+          });
+        }
         return results;
       });
       browser.close();
