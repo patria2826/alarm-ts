@@ -38,8 +38,9 @@ function handleEvent(event) {
             replyText = "https://gbfssrlistbyod.memo.wiki/";
             break;
         case "NEWS" || "公告":
-            const respnse = getGBFlatestNews();
-            respnse.then((result) => (replyText = result[0]["url"]));
+            getGBFlatestNews()
+                .then(response => (replyText = JSON.stringify(response)))
+                .catch(err => (replyText = err));
             break;
         default:
             replyText = `你剛剛說：「${event.message.text}」`;
