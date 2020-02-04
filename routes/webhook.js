@@ -54,32 +54,57 @@ function handleEvent(event) {
                 dataList.forEach(data => {
                     newsCard.push({
                         type: "bubble",
-                        body: {
+                        header: {
                             type: "box",
                             layout: "vertical",
                             contents: [
                                 {
                                     type: "text",
                                     text: data.text,
-                                    weight: "bold",
-                                    size: "xl"
-                                },
+                                    wrap: true,
+                                    contents: [
+                                        {
+                                            type: "span",
+                                            text: data.text,
+                                            weight: "bold",
+                                            size: "xl"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        hero: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
                                 {
                                     type: "image",
                                     url: data.thumbnailImg,
                                     size: "full",
-                                    aspectMode: "fit"
-                                    // action: {
-                                    //   type: "uri",
-                                    //   label: "",
-                                    //   uri: data.url
-                                    // }
-                                },
+                                    aspectMode: "fit",
+                                    aspectRatio: "2:1"
+                                }
+                            ]
+                        },
+                        body: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
                                 {
                                     type: "text",
-                                    text: "続きを読む",
-                                    weight: "regular",
-                                    size: "lg",
+                                    text: data.date,
+                                    size: "sm",
+                                    color: "#aaaaaa"
+                                }
+                            ]
+                        },
+                        footer: {
+                            type: "box",
+                            layout: "vertical",
+                            height: "100px",
+                            contents: [
+                                {
+                                    type: "button",
                                     action: {
                                         type: "uri",
                                         label: "続きを読む",
@@ -87,6 +112,11 @@ function handleEvent(event) {
                                     }
                                 }
                             ]
+                        },
+                        action: {
+                            type: "uri",
+                            label: "続きを読む",
+                            uri: data.url
                         }
                     });
                     // newsColumn.push({
@@ -102,7 +132,6 @@ function handleEvent(event) {
                     //   text: data.text
                     // });
                 });
-                console.log("newsCard", newsCard);
             })
                 .then(() => {
                 echo = {
@@ -133,11 +162,12 @@ function handleEvent(event) {
 }
 // GBF crawler
 const newsUrl = "https://granbluefantasy.jp/news/index.php";
-async function getGBFLatestNews() {
+function getGBFLatestNews() {
     return new Promise(async (resolve, reject) => {
         try {
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
+            // const newsUrl = "https://granbluefantasy.jp/news/index.php";
             await page.goto(newsUrl);
             //   await page.goto("https://granbluefantasy.jp/news/index.php");
             let urls = await page.evaluate(() => {
@@ -145,6 +175,12 @@ async function getGBFLatestNews() {
                 let items = document.querySelectorAll("article.scroll_show_box");
                 items.forEach((item, key, parent) => {
                     if (item.dataset["page"] === "1") {
+                        const dateAndTime = item.children
+                            .item(1)
+                            .children.item(0)
+                            .children.item(0)
+                            .innerHTML.split("<")[0]
+                            .split("&nbsp;");
                         results.push({
                             url: item.children
                                 .item(1)
@@ -163,7 +199,8 @@ async function getGBFLatestNews() {
                                 .children.item(3)
                                 .children.item(0)
                                 .children.item(0)
-                                .getAttribute("src")
+                                .getAttribute("src"),
+                            date: `${dateAndTime[0]} ${dateAndTime[1]}`
                         });
                     }
                 });

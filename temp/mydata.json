@@ -1,0 +1,52 @@
+{
+  "type": "bubble",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "data.text",
+        "wrap": true,
+        "contents": [
+          {
+            "type": "span",
+            "text": "data.text",
+            "weight": "bold",
+            "size": "xl"
+          }
+        ]
+      }
+    ]
+  },
+  "hero": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "image",
+        "url": "https://granbluefantasy.jp/pages/wp-content/uploads/2030/02/076293f810cc71d909cfd3fdc4ff98da.png",
+        "size": "full",
+        "aspectMode": "fit"
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "続きを読む",
+        "weight": "regular",
+        "size": "lg",
+        "align": "center"
+      }
+    ]
+  },
+  "action": {
+    "type": "uri",
+    "label": "続きを読む",
+    "uri": "https://granbluefantasy.jp/pages/?p=28819"
+  }
+}
