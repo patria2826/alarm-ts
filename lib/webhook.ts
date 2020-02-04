@@ -49,6 +49,10 @@ function handleEvent(event: line.WebhookEvent) {
     case "SSR":
       replyText = "https://gbfssrlistbyod.memo.wiki/";
       break;
+    case "NEWS" || "公告":
+      const respnse = getGBFlatestNews();
+      respnse.then((result: any[]) => (replyText = result[0]["url"]));
+      break;
     default:
       replyText = `你剛剛說：「${event.message.text}」`;
       break;
@@ -63,13 +67,14 @@ function handleEvent(event: line.WebhookEvent) {
   return client.replyMessage(event.replyToken, echo);
 }
 
-// crawler
-async function latestNews() {
+// GBF crawler
+async function getGBFlatestNews() {
   return new Promise(async (resolve, reject) => {
     try {
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
-      await page.goto("https://granbluefantasy.jp/news/index.php");
+      const newsUrl = "https://granbluefantasy.jp/news/index.php";
+      await page.goto(newsUrl);
       let urls = await page.evaluate(() => {
         let results: any[] = [];
         let items = document.querySelectorAll("article.scroll_show_box");
@@ -77,12 +82,13 @@ async function latestNews() {
           (item: HTMLElement, key: number, parent: NodeListOf<Element>) => {
             if (item.dataset["page"] === "1") {
               results.push({
-                url: item.children
-                  .item(1)
-                  .children.item(0)
-                  .children.item(1)
-                  .children.item(0)
-                  .getAttribute("href"),
+                url:
+                  item.children
+                    .item(1)
+                    .children.item(0)
+                    .children.item(1)
+                    .children.item(0)
+                    .getAttribute("href") || newsUrl,
                 text: item.children
                   .item(1)
                   .children.item(0)
@@ -101,4 +107,5 @@ async function latestNews() {
     }
   });
 }
+
 module.exports = app;
