@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const line = require("@line/bot-sdk");
 const express = require("express");
-const puppeteer = require("puppeteer");
+const GBFNewsCrawler_1 = require("./components/GBFNewsCrawler");
+const gbfSSRList_1 = require("./components/gbfSSRList");
+const Urls_1 = require("./components/Urls");
 const config = {
     channelAccessToken: "8PH4V0u0FvfPEm/yQ9NZB61U1EUD01jtZnrfno5tAY41X2xkqe6f/qWjLwlTnPgWJe+YHtNCE0Efgn3cd6JUcXSU7fJhCTnJA4DY/NXs1cBSVd5iybyneAjCI/2qaBZPyAS/VuD2hQzVN6vNhF6c6wdB04t89/1O/w1cDnyilFU=",
     channelSecret: "71452c617aba78afb206fe9b2f61ad74"
@@ -36,7 +38,7 @@ function handleEvent(event) {
     switch (event.message.text.trim().toUpperCase()) {
         case "SSR":
             const charaClass = [];
-            return gbfSSRList()
+            return gbfSSRList_1.default()
                 .then((result) => {
                 return result;
             })
@@ -67,7 +69,7 @@ function handleEvent(event) {
                 .then(() => {
                 echo = {
                     type: "flex",
-                    altText: "https://gbfssrlistbyod.memo.wiki/",
+                    altText: Urls_1.default.GBFSSR,
                     contents: {
                         type: "bubble",
                         header: {
@@ -97,7 +99,7 @@ function handleEvent(event) {
         case "NEWS":
         case "公告":
             const newsCard = [];
-            return getGBFLatestNews()
+            return GBFNewsCrawler_1.default()
                 .then((result) => {
                 return result;
             })
@@ -175,7 +177,7 @@ function handleEvent(event) {
                 .then(() => {
                 echo = {
                     type: "flex",
-                    altText: "GBF News",
+                    altText: Urls_1.default.GBFNews,
                     contents: {
                         type: "carousel",
                         contents: newsCard
@@ -190,135 +192,5 @@ function handleEvent(event) {
             };
             return client.replyMessage(event.replyToken, echo);
     }
-}
-// crawler
-function crawler(targetUrl, items, elementParser) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const browser = await puppeteer.launch();
-            const page = await browser.newPage();
-            await page.goto(targetUrl);
-            let urls = await page.evaluate(() => {
-                let results = [];
-                items.forEach((item, key, parent) => {
-                    elementParser(item, key, parent, results);
-                });
-                return results;
-            });
-            browser.close();
-            return resolve(urls);
-        }
-        catch (err) {
-            return reject(err);
-        }
-    });
-}
-// GBFLatestNewsParser
-function GBFLatestNewsParser(item, key, parent, results) {
-    if (item.dataset["page"] === "1") {
-        const dateAndTime = item.children
-            .item(1)
-            .firstElementChild.firstElementChild.innerHTML.split("<")[0]
-            .split("&nbsp;");
-        results.push({
-            url: item.children
-                .item(1)
-                .firstElementChild.children.item(1)
-                .firstElementChild.getAttribute("href"),
-            text: item.children.item(1).firstElementChild.children.item(1)
-                .firstElementChild.textContent,
-            thumbnailImg: item.children
-                .item(1)
-                .firstElementChild.children.item(3)
-                .firstElementChild.firstElementChild.getAttribute("src")
-                .indexOf("https") !== -1
-                ? item.children
-                    .item(1)
-                    .firstElementChild.children.item(3)
-                    .firstElementChild.firstElementChild.getAttribute("src")
-                : "https://granbluefantasy.jp/data/news_img_dummy_logo2.jpg",
-            date: `${dateAndTime[0]} ${dateAndTime[1]}`
-        });
-    }
-}
-// GBF crawler
-function getGBFLatestNews() {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const browser = await puppeteer.launch();
-            const page = await browser.newPage();
-            const newsUrl = "https://granbluefantasy.jp/news/index.php";
-            await page.goto(newsUrl);
-            let urls = await page.evaluate(() => {
-                let results = [];
-                let items = document.querySelectorAll("article.scroll_show_box");
-                items.forEach((item, key, parent) => {
-                    if (item.dataset["page"] === "1") {
-                        const dateAndTime = item.children
-                            .item(1)
-                            .firstElementChild.firstElementChild.innerHTML.split("<")[0]
-                            .split("&nbsp;");
-                        results.push({
-                            url: item.children
-                                .item(1)
-                                .firstElementChild.children.item(1)
-                                .firstElementChild.getAttribute("href") || newsUrl,
-                            text: item.children.item(1).firstElementChild.children.item(1)
-                                .firstElementChild.textContent,
-                            thumbnailImg: item.children
-                                .item(1)
-                                .firstElementChild.children.item(3)
-                                .firstElementChild.firstElementChild.getAttribute("src")
-                                .indexOf("https") !== -1
-                                ? item.children
-                                    .item(1)
-                                    .firstElementChild.children.item(3)
-                                    .firstElementChild.firstElementChild.getAttribute("src")
-                                : "https://granbluefantasy.jp/data/news_img_dummy_logo2.jpg",
-                            date: `${dateAndTime[0]} ${dateAndTime[1]}`
-                        });
-                    }
-                });
-                return results;
-            });
-            browser.close();
-            return resolve(urls);
-        }
-        catch (err) {
-            return reject(err);
-        }
-    });
-}
-function gbfSSRList() {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const browser = await puppeteer.launch();
-            const page = await browser.newPage();
-            const ssrListUrl = "https://gbfssrlistbyod.memo.wiki/";
-            await page.setDefaultNavigationTimeout(0);
-            await page.goto("https://gbfssrlistbyod.memo.wiki/");
-            let urls = await page.evaluate(() => {
-                let results = [];
-                let items = document.querySelectorAll("ul.list-1").item(8).children;
-                for (let i = 0; i < 10; i++) {
-                    results.push({
-                        text: items.item(i).textContent,
-                        url: items.item(i).firstElementChild.getAttribute("href"),
-                        thumbnailImg: items.item(i).firstElementChild.firstElementChild
-                            ? items
-                                .item(i)
-                                .firstElementChild.firstElementChild.getAttribute("src")
-                            : ""
-                    });
-                }
-                return results;
-            });
-            browser.close();
-            return resolve(urls);
-        }
-        catch (err) {
-            return reject(err);
-        }
-    });
 }
 module.exports = app;

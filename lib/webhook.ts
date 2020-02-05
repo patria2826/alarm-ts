@@ -1,19 +1,9 @@
 import * as line from "@line/bot-sdk";
 import * as express from "express";
-import * as puppeteer from "puppeteer";
-
-interface IGBFNews {
-  url: string;
-  text: string;
-  thumbnailImg: string;
-  date: string;
-}
-
-interface IGBFSSRList {
-  url: string;
-  text: string;
-  thumbnailImg: string;
-}
+import getGBFLatestNews from "./components/GBFNewsCrawler";
+import gbfSSRList from "./components/gbfSSRList";
+import { IGBFNews, IGBFSSRList } from "./components/Interface";
+import EUrls from "./components/Urls";
 
 const config: line.Config = {
   channelAccessToken:
@@ -92,7 +82,7 @@ function handleEvent(event: line.WebhookEvent) {
         .then(() => {
           echo = {
             type: "flex",
-            altText: "https://gbfssrlistbyod.memo.wiki/",
+            altText: EUrls.GBFSSR,
             contents: {
               type: "bubble",
               header: {
@@ -200,7 +190,7 @@ function handleEvent(event: line.WebhookEvent) {
         .then(() => {
           echo = {
             type: "flex",
-            altText: "GBF News",
+            altText: EUrls.GBFNews,
             contents: {
               type: "carousel",
               contents: newsCard
@@ -215,157 +205,6 @@ function handleEvent(event: line.WebhookEvent) {
       };
       return client.replyMessage(event.replyToken, echo);
   }
-}
-
-// crawler
-function crawler<IResult>(
-  targetUrl: string,
-  items: NodeListOf<Element>,
-  elementParser: (
-    item: HTMLElement,
-    key: number,
-    parent: NodeListOf<Element>,
-    results: any[]
-  ) => {}
-) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      await page.goto(targetUrl);
-      let urls = await page.evaluate(() => {
-        let results: IResult[] = [];
-        items.forEach(
-          (item: HTMLElement, key: number, parent: NodeListOf<Element>) => {
-            elementParser(item, key, parent, results);
-          }
-        );
-        return results;
-      });
-      browser.close();
-      return resolve(urls);
-    } catch (err) {
-      return reject(err);
-    }
-  });
-}
-
-// GBFLatestNewsParser
-function GBFLatestNewsParser(
-  item: HTMLElement,
-  key: number,
-  parent: NodeListOf<Element>,
-  results: any[]
-) {
-  if (item.dataset["page"] === "1") {
-    const dateAndTime = item.children
-      .item(1)
-      .firstElementChild.firstElementChild.innerHTML.split("<")[0]
-      .split("&nbsp;");
-    results.push({
-      url: item.children
-        .item(1)
-        .firstElementChild.children.item(1)
-        .firstElementChild.getAttribute("href"),
-      text: item.children.item(1).firstElementChild.children.item(1)
-        .firstElementChild.textContent,
-      thumbnailImg:
-        item.children
-          .item(1)
-          .firstElementChild.children.item(3)
-          .firstElementChild.firstElementChild.getAttribute("src")
-          .indexOf("https") !== -1
-          ? item.children
-              .item(1)
-              .firstElementChild.children.item(3)
-              .firstElementChild.firstElementChild.getAttribute("src")
-          : "https://granbluefantasy.jp/data/news_img_dummy_logo2.jpg",
-      date: `${dateAndTime[0]} ${dateAndTime[1]}`
-    });
-  }
-}
-// GBF crawler
-function getGBFLatestNews() {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      const newsUrl = "https://granbluefantasy.jp/news/index.php";
-      await page.goto(newsUrl);
-      let urls = await page.evaluate(() => {
-        let results: IGBFNews[] = [];
-        let items = document.querySelectorAll("article.scroll_show_box");
-        items.forEach(
-          (item: HTMLElement, key: number, parent: NodeListOf<Element>) => {
-            if (item.dataset["page"] === "1") {
-              const dateAndTime = item.children
-                .item(1)
-                .firstElementChild.firstElementChild.innerHTML.split("<")[0]
-                .split("&nbsp;");
-              results.push({
-                url:
-                  item.children
-                    .item(1)
-                    .firstElementChild.children.item(1)
-                    .firstElementChild.getAttribute("href") || newsUrl,
-                text: item.children.item(1).firstElementChild.children.item(1)
-                  .firstElementChild.textContent,
-                thumbnailImg:
-                  item.children
-                    .item(1)
-                    .firstElementChild.children.item(3)
-                    .firstElementChild.firstElementChild.getAttribute("src")
-                    .indexOf("https") !== -1
-                    ? item.children
-                        .item(1)
-                        .firstElementChild.children.item(3)
-                        .firstElementChild.firstElementChild.getAttribute("src")
-                    : "https://granbluefantasy.jp/data/news_img_dummy_logo2.jpg",
-                date: `${dateAndTime[0]} ${dateAndTime[1]}`
-              });
-            }
-          }
-        );
-        return results;
-      });
-      browser.close();
-      return resolve(urls);
-    } catch (err) {
-      return reject(err);
-    }
-  });
-}
-
-function gbfSSRList() {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      const ssrListUrl = "https://gbfssrlistbyod.memo.wiki/";
-      await page.setDefaultNavigationTimeout(0);
-      await page.goto("https://gbfssrlistbyod.memo.wiki/");
-      let urls = await page.evaluate(() => {
-        let results: IGBFSSRList[] = [];
-        let items = document.querySelectorAll("ul.list-1").item(8).children;
-        for (let i = 0; i < 10; i++) {
-          results.push({
-            text: items.item(i).textContent,
-            url: items.item(i).firstElementChild.getAttribute("href"),
-            thumbnailImg: items.item(i).firstElementChild.firstElementChild
-              ? items
-                  .item(i)
-                  .firstElementChild.firstElementChild.getAttribute("src")
-              : ""
-          });
-        }
-        return results;
-      });
-      browser.close();
-      return resolve(urls);
-    } catch (err) {
-      return reject(err);
-    }
-  });
 }
 
 module.exports = app;
