@@ -5,6 +5,7 @@ import gbfSSRList from "./components/gbfSSRList";
 import { IGBFNews, IGBFSSRList } from "./components/Interface";
 import EUrls from "./components/Urls";
 
+// user config
 const config: line.Config = {
   channelAccessToken:
     "8PH4V0u0FvfPEm/yQ9NZB61U1EUD01jtZnrfno5tAY41X2xkqe6f/qWjLwlTnPgWJe+YHtNCE0Efgn3cd6JUcXSU7fJhCTnJA4DY/NXs1cBSVd5iybyneAjCI/2qaBZPyAS/VuD2hQzVN6vNhF6c6wdB04t89/1O/w1cDnyilFU=",
