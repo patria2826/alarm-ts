@@ -6,7 +6,7 @@ function getGBFLatestNews() {
   return new Promise(async (resolve, reject) => {
     try {
       const browser = await puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"]
+        args: ["--no-sandbox", "--disable-setuid-sandbox"] //for heroku
       });
       const page = await browser.newPage();
       const newsUrl = EUrls.GBFNews;
