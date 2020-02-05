@@ -5,7 +5,9 @@ import EUrls from "./Urls";
 function gbfSSRList() {
   return new Promise(async (resolve, reject) => {
     try {
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({
+        args: ["--no-sandbox", "--disable-setuid-sandbox"]
+      });
       const page = await browser.newPage();
       const ssrListUrl = EUrls.GBFSSR;
       await page.setDefaultNavigationTimeout(0);

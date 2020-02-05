@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const line = require("@line/bot-sdk");
 const express = require("express");
 const GBFNewsCrawler_1 = require("./components/GBFNewsCrawler");
-const GBFSSRList_1 = require("./components/GBFSSRList");
+const GBFSSRListCrawler_1 = require("./components/GBFSSRListCrawler");
 const Urls_1 = require("./components/Urls");
 // user config
 const config = {
@@ -39,7 +39,7 @@ function handleEvent(event) {
     switch (event.message.text.trim().toUpperCase()) {
         case "SSR":
             const charaClass = [];
-            return GBFSSRList_1.default()
+            return GBFSSRListCrawler_1.default()
                 .then((result) => {
                 return result;
             })

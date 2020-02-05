@@ -1,7 +1,7 @@
 import * as line from "@line/bot-sdk";
 import * as express from "express";
 import getGBFLatestNews from "./components/GBFNewsCrawler";
-import gbfSSRList from "./components/GBFSSRList";
+import gbfSSRList from "./components/GBFSSRListCrawler";
 import { IGBFNews, IGBFSSRList } from "./components/Interface";
 import EUrls from "./components/Urls";
 

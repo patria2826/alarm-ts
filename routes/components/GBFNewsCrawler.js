@@ -5,7 +5,9 @@ const Urls_1 = require("./Urls");
 function getGBFLatestNews() {
     return new Promise(async (resolve, reject) => {
         try {
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({
+                args: ["--no-sandbox", "--disable-setuid-sandbox"]
+            });
             const page = await browser.newPage();
             const newsUrl = Urls_1.default.GBFNews;
             await page.goto(newsUrl);
