@@ -1,52 +1,206 @@
 {
-  "type": "bubble",
-  "header": {
-    "type": "box",
-    "layout": "vertical",
-    "contents": [
-      {
-        "type": "text",
-        "text": "data.text",
-        "wrap": true,
+  "type": "carousel",
+  "contents": [
+    {
+      "type": "bubble",
+      "header": {
+        "type": "box",
+        "layout": "vertical",
         "contents": [
           {
-            "type": "span",
-            "text": "data.text",
-            "weight": "bold",
-            "size": "xl"
+            "type": "text",
+            "text": "グランブルーファンタジー ヴァーサス発売記念キャンペーン開催のお知らせ",
+            "wrap": true,
+            "contents": [
+              {
+                "type": "span",
+                "text": "グランブルーファンタジーヴァーサス発売記念キャンペーン開催のお知らせ",
+                "weight": "bold",
+                "size": "xl"
+              }
+            ]
           }
         ]
+      },
+      "hero": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "image",
+            "url": "/data/news_img_dummy_logo2.jpg",
+            "size": "full",
+            "aspectMode": "fit",
+            "aspectRatio": "2:1"
+          }
+        ]
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "2020-02-05 17:00",
+            "size": "sm",
+            "color": "#aaaaaa"
+          }
+        ]
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "height": "100px",
+        "contents": [
+          {
+            "type": "button",
+            "action": {
+              "type": "uri",
+              "label": "続きを読む",
+              "uri": "https://granbluefantasy.jp/pages/?p=29134"
+            }
+          }
+        ]
+      },
+      "action": {
+        "type": "uri",
+        "label": "続きを読む",
+        "uri": "https://granbluefantasy.jp/pages/?p=29134"
       }
-    ]
-  },
-  "hero": {
-    "type": "box",
-    "layout": "vertical",
-    "contents": [
-      {
-        "type": "image",
-        "url": "https://granbluefantasy.jp/pages/wp-content/uploads/2030/02/076293f810cc71d909cfd3fdc4ff98da.png",
-        "size": "full",
-        "aspectMode": "fit"
+    },
+    {
+      "type": "bubble",
+      "header": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "これからの「グランブルーファンタジー」2020年2月号",
+            "wrap": true,
+            "contents": [
+              {
+                "type": "span",
+                "text": "これからの「グランブルーファンタジー」2020年2月号",
+                "weight": "bold",
+                "size": "xl"
+              }
+            ]
+          }
+        ]
+      },
+      "hero": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "image",
+            "url": "https://granbluefantasy.jp/pages/wp-content/uploads/2030/02/076293f810cc71d909cfd3fdc4ff98da.png",
+            "size": "full",
+            "aspectMode": "fit",
+            "aspectRatio": "2:1"
+          }
+        ]
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "2020-02-01 12:00",
+            "size": "sm",
+            "color": "#aaaaaa"
+          }
+        ]
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "height": "100px",
+        "contents": [
+          {
+            "type": "button",
+            "action": {
+              "type": "uri",
+              "label": "続きを読む",
+              "uri": "https://granbluefantasy.jp/pages/?p=28819"
+            }
+          }
+        ]
+      },
+      "action": {
+        "type": "uri",
+        "label": "続きを読む",
+        "uri": "https://granbluefantasy.jp/pages/?p=28819"
       }
-    ]
-  },
-  "footer": {
-    "type": "box",
-    "layout": "vertical",
-    "contents": [
-      {
-        "type": "text",
-        "text": "続きを読む",
-        "weight": "regular",
-        "size": "lg",
-        "align": "center"
+    },
+    {
+      "type": "bubble",
+      "header": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "レジェンドフェス開催＆新キャラクター「イルザ」(光属性)「ヨダルラーハ」(風属性)紹介！",
+            "wrap": true,
+            "contents": [
+              {
+                "type": "span",
+                "text": "レジェンドフェス開催＆新キャラクター「イルザ」(光属性)「ヨダルラーハ」(風属性)紹介！",
+                "weight": "bold",
+                "size": "xl"
+              }
+            ]
+          }
+        ]
+      },
+      "hero": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "image",
+            "url": "https://granbluefantasy.jp/pages/wp-content/uploads/2020/01/82de4f8c13ffa6870a910a16e578e246.png",
+            "size": "full",
+            "aspectMode": "fit",
+            "aspectRatio": "2:1"
+          }
+        ]
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "2020-01-31 12:00",
+            "size": "sm",
+            "color": "#aaaaaa"
+          }
+        ]
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "height": "100px",
+        "contents": [
+          {
+            "type": "button",
+            "action": {
+              "type": "uri",
+              "label": "続きを読む",
+              "uri": "https://granbluefantasy.jp/pages/?p=29119"
+            }
+          }
+        ]
+      },
+      "action": {
+        "type": "uri",
+        "label": "続きを読む",
+        "uri": "https://granbluefantasy.jp/pages/?p=29119"
       }
-    ]
-  },
-  "action": {
-    "type": "uri",
-    "label": "続きを読む",
-    "uri": "https://granbluefantasy.jp/pages/?p=28819"
-  }
+    }
+  ]
 }

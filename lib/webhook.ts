@@ -58,28 +58,75 @@ function handleEvent(event: line.WebhookEvent) {
   // create a echoing text message
   let echo: line.Message;
 
-  switch (event.message.text.toUpperCase()) {
+  switch (event.message.text.trim().toUpperCase()) {
     case "SSR":
-      echo = {
-        type: "template",
-        altText: "https://gbfssrlistbyod.memo.wiki/",
-        template: {
-          type: "buttons",
-          text: "GBF SSR 腳色",
-          title: "GBF SSR 腳色",
-          actions: [{ type: "uri", label: "", uri: "" }]
-        }
-      };
-      return client.replyMessage(event.replyToken, echo);
-
-    case "NEWS" || "公告":
-      let newsCard: line.FlexBubble[];
+      const charaClass: line.FlexBox[] = [];
+      return gbfSSRList()
+        .then((result: IGBFSSRList[]) => {
+          return result;
+        })
+        .then((dataList: IGBFSSRList[]) => {
+          dataList.forEach((data, index) => {
+            const contentsArr: line.FlexComponent[] = [
+              {
+                type: "text",
+                align: "center",
+                text: data.text
+              }
+            ];
+            data.thumbnailImg &&
+              contentsArr.push({ type: "icon", url: data.thumbnailImg });
+            charaClass.push({
+              type: "box",
+              layout: "baseline",
+              borderWidth: "2px",
+              borderColor: "#00BBFF",
+              cornerRadius: "20px",
+              offsetTop: `${index}px`,
+              paddingAll: "5px",
+              action: { type: "uri", label: data.text, uri: data.url },
+              contents: contentsArr
+            });
+          });
+        })
+        .then(() => {
+          echo = {
+            type: "flex",
+            altText: "https://gbfssrlistbyod.memo.wiki/",
+            contents: {
+              type: "bubble",
+              header: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                  {
+                    type: "text",
+                    text: "GBF SSR List",
+                    wrap: true,
+                    weight: "bold"
+                  }
+                ]
+              },
+              hero: {
+                type: "image",
+                url: "https://i.imgur.com/EoIMHmO.png",
+                size: "full",
+                aspectMode: "fit",
+                aspectRatio: "2:1"
+              },
+              body: { type: "box", contents: charaClass, layout: "vertical" }
+            }
+          };
+        })
+        .finally(() => client.replyMessage(event.replyToken, echo));
+    case "NEWS":
+    case "公告":
+      const newsCard: line.FlexBubble[] = [];
       return getGBFLatestNews()
-        .then((result: any[]) => {
+        .then((result: IGBFNews[]) => {
           return result;
         })
         .then((dataList: IGBFNews[]) => {
-          newsCard = [];
           dataList.forEach(data => {
             newsCard.push({
               type: "bubble",
@@ -170,6 +217,73 @@ function handleEvent(event: line.WebhookEvent) {
   }
 }
 
+// crawler
+function crawler<IResult>(
+  targetUrl: string,
+  items: NodeListOf<Element>,
+  elementParser: (
+    item: HTMLElement,
+    key: number,
+    parent: NodeListOf<Element>,
+    results: any[]
+  ) => {}
+) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.goto(targetUrl);
+      let urls = await page.evaluate(() => {
+        let results: IResult[] = [];
+        items.forEach(
+          (item: HTMLElement, key: number, parent: NodeListOf<Element>) => {
+            elementParser(item, key, parent, results);
+          }
+        );
+        return results;
+      });
+      browser.close();
+      return resolve(urls);
+    } catch (err) {
+      return reject(err);
+    }
+  });
+}
+
+// GBFLatestNewsParser
+function GBFLatestNewsParser(
+  item: HTMLElement,
+  key: number,
+  parent: NodeListOf<Element>,
+  results: any[]
+) {
+  if (item.dataset["page"] === "1") {
+    const dateAndTime = item.children
+      .item(1)
+      .firstElementChild.firstElementChild.innerHTML.split("<")[0]
+      .split("&nbsp;");
+    results.push({
+      url: item.children
+        .item(1)
+        .firstElementChild.children.item(1)
+        .firstElementChild.getAttribute("href"),
+      text: item.children.item(1).firstElementChild.children.item(1)
+        .firstElementChild.textContent,
+      thumbnailImg:
+        item.children
+          .item(1)
+          .firstElementChild.children.item(3)
+          .firstElementChild.firstElementChild.getAttribute("src")
+          .indexOf("https") !== -1
+          ? item.children
+              .item(1)
+              .firstElementChild.children.item(3)
+              .firstElementChild.firstElementChild.getAttribute("src")
+          : "https://granbluefantasy.jp/data/news_img_dummy_logo2.jpg",
+      date: `${dateAndTime[0]} ${dateAndTime[1]}`
+    });
+  }
+}
 // GBF crawler
 function getGBFLatestNews() {
   return new Promise(async (resolve, reject) => {
@@ -186,30 +300,27 @@ function getGBFLatestNews() {
             if (item.dataset["page"] === "1") {
               const dateAndTime = item.children
                 .item(1)
-                .children.item(0)
-                .children.item(0)
-                .innerHTML.split("<")[0]
+                .firstElementChild.firstElementChild.innerHTML.split("<")[0]
                 .split("&nbsp;");
               results.push({
                 url:
                   item.children
                     .item(1)
-                    .children.item(0)
-                    .children.item(1)
-                    .children.item(0)
-                    .getAttribute("href") || newsUrl,
-                text: item.children
-                  .item(1)
-                  .children.item(0)
-                  .children.item(1)
-                  .children.item(0).textContent,
-                thumbnailImg: item.children
-                  .item(1)
-                  .children.item(0)
-                  .children.item(3)
-                  .children.item(0)
-                  .children.item(0)
-                  .getAttribute("src"),
+                    .firstElementChild.children.item(1)
+                    .firstElementChild.getAttribute("href") || newsUrl,
+                text: item.children.item(1).firstElementChild.children.item(1)
+                  .firstElementChild.textContent,
+                thumbnailImg:
+                  item.children
+                    .item(1)
+                    .firstElementChild.children.item(3)
+                    .firstElementChild.firstElementChild.getAttribute("src")
+                    .indexOf("https") !== -1
+                    ? item.children
+                        .item(1)
+                        .firstElementChild.children.item(3)
+                        .firstElementChild.firstElementChild.getAttribute("src")
+                    : "https://granbluefantasy.jp/data/news_img_dummy_logo2.jpg",
                 date: `${dateAndTime[0]} ${dateAndTime[1]}`
               });
             }
@@ -231,22 +342,20 @@ function gbfSSRList() {
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
       const ssrListUrl = "https://gbfssrlistbyod.memo.wiki/";
-      await page.goto(ssrListUrl);
+      await page.setDefaultNavigationTimeout(0);
+      await page.goto("https://gbfssrlistbyod.memo.wiki/");
       let urls = await page.evaluate(() => {
         let results: IGBFSSRList[] = [];
-        let items = document.querySelector("ul#362777_block_5").children;
-        for (let i = 1; i < items.length; i++) {
+        let items = document.querySelectorAll("ul.list-1").item(8).children;
+        for (let i = 0; i < 10; i++) {
           results.push({
-            url: items.item(i).getAttribute("href"),
-            text: items
-              .item(i)
-              .children.item(0)
-              .getAttribute("innerText"),
-            thumbnailImg: items
-              .item(i)
-              .children.item(0)
-              .children.item(0)
-              .getAttribute("src")
+            text: items.item(i).textContent,
+            url: items.item(i).firstElementChild.getAttribute("href"),
+            thumbnailImg: items.item(i).firstElementChild.firstElementChild
+              ? items
+                  .item(i)
+                  .firstElementChild.firstElementChild.getAttribute("src")
+              : ""
           });
         }
         return results;
