@@ -3,8 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const line = require("@line/bot-sdk");
 const express = require("express");
 const GBFNewsCrawler_1 = require("./components/GBFNewsCrawler");
-const gbfSSRList_1 = require("./components/gbfSSRList");
+const GBFSSRList_1 = require("./components/GBFSSRList");
 const Urls_1 = require("./components/Urls");
+// user config
 const config = {
     channelAccessToken: "8PH4V0u0FvfPEm/yQ9NZB61U1EUD01jtZnrfno5tAY41X2xkqe6f/qWjLwlTnPgWJe+YHtNCE0Efgn3cd6JUcXSU7fJhCTnJA4DY/NXs1cBSVd5iybyneAjCI/2qaBZPyAS/VuD2hQzVN6vNhF6c6wdB04t89/1O/w1cDnyilFU=",
     channelSecret: "71452c617aba78afb206fe9b2f61ad74"
@@ -38,7 +39,7 @@ function handleEvent(event) {
     switch (event.message.text.trim().toUpperCase()) {
         case "SSR":
             const charaClass = [];
-            return gbfSSRList_1.default()
+            return GBFSSRList_1.default()
                 .then((result) => {
                 return result;
             })
