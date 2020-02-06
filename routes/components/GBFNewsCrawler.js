@@ -6,11 +6,17 @@ function getGBFLatestNews() {
     return new Promise(async (resolve, reject) => {
         try {
             const browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"] //for heroku
+                args: [
+                    //for heroku
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    //to speed up
+                    "--proxy-server='direct://'",
+                    "--proxy-bypass-list=*"
+                ]
             });
             const page = await browser.newPage();
-            const newsUrl = Urls_1.default.GBFNews;
-            await page.goto(newsUrl);
+            await page.goto(Urls_1.default.GBFNews);
             let urls = await page.evaluate(() => {
                 let results = [];
                 let items = document.querySelectorAll("article.scroll_show_box");
@@ -24,7 +30,7 @@ function getGBFLatestNews() {
                             url: item.children
                                 .item(1)
                                 .firstElementChild.children.item(1)
-                                .firstElementChild.getAttribute("href") || newsUrl,
+                                .firstElementChild.getAttribute("href") || Urls_1.default.GBFNews,
                             text: item.children.item(1).firstElementChild.children.item(1)
                                 .firstElementChild.textContent,
                             thumbnailImg: item.children

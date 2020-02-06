@@ -6,10 +6,16 @@ function gbfSSRList() {
   return new Promise(async (resolve, reject) => {
     try {
       const browser = await puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"] //for heroku
+        args: [
+          //for heroku
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          //to speed up
+          "--proxy-server='direct://'",
+          "--proxy-bypass-list=*"
+        ]
       });
       const page = await browser.newPage();
-      const ssrListUrl = EUrls.GBFSSR;
       await page.setDefaultNavigationTimeout(0);
       await page.goto(EUrls.GBFSSR);
       let urls = await page.evaluate(() => {
