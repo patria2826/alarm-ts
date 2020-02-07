@@ -34,7 +34,15 @@ function GBFSSRListByClassCrawler() {
             thumbnailImg: items
               .item(i)
               .children.item(1)
-              .firstElementChild.getAttribute("src")
+              .firstElementChild.getAttribute("src"),
+            charaType: items.item(i).children.item(4).textContent,
+            race: items.item(i).children.item(5).textContent,
+            weapon: [
+              items.item(i).children.item(6).textContent,
+              items.item(i).children.item(7).textContent
+            ],
+            hp: items.item(i).children.item(8).textContent,
+            attack: items.item(i).children.item(9).textContent
           });
         }
         return results;
