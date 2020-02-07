@@ -3,6 +3,7 @@ import * as express from "express";
 import axios from "axios";
 import getGBFLatestNews from "./components/GBFNewsCrawler";
 import gbfSSRList from "./components/GBFSSRListCrawler";
+import GBFSSRListByClassCrawler from "./components/GBFSSRListByClassCrawler";
 import { IGBFNews, IGBFSSRList } from "./components/Interface";
 import EUrls from "./components/Urls";
 
@@ -208,20 +209,17 @@ function handleEvent(event: line.WebhookEvent) {
         });
     case "FIRE":
     case "火":
-      axios
-        .get(
-          "https://gbfssrlistbyod.memo.wiki/d/%b2%d0%d6%a4%c0%ad%bc%e7%ca%c7"
-        )
-        .then(response => console.log("response", response))
-        .catch(err => {
-          console.log(err);
+      GBFSSRListByClassCrawler()
+        .then(result => {
+          return result;
         })
-        .then(() => {
-          return (echo = {
-            type: "text",
-            text: "Yooooo"
-          });
+        .then(data => {
+          console.log("data", data);
         });
+      echo = {
+        type: "text",
+        text: "Yooooo"
+      };
       return client.replyMessage(event.replyToken, echo);
     default:
       echo = {
