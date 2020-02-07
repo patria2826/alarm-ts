@@ -37,26 +37,34 @@ function handleEvent(event) {
     console.log(`Received message: ${event.message.text}`);
     // create a echoing text message
     let echo;
-    // url
-    let ssrClassUrl;
-    switch (event.message.text) {
-        case "火屬性SSR":
-            return (ssrClassUrl = Urls_1.EClassUrls.fire);
-        case "水屬性SSR":
-            return (ssrClassUrl = Urls_1.EClassUrls.water);
-        case "土屬性SSR":
-            return (ssrClassUrl = Urls_1.EClassUrls.soil);
-        case "風屬性SSR":
-            return (ssrClassUrl = Urls_1.EClassUrls.wind);
-        case "光屬性SSR":
-            return (ssrClassUrl = Urls_1.EClassUrls.light);
-        case "暗屬性SSR":
-            return (ssrClassUrl = Urls_1.EClassUrls.dark);
-        case "十天眾":
-            return (ssrClassUrl = Urls_1.EClassUrls.theEternals);
-        case "十賢者":
-            return (ssrClassUrl = Urls_1.EClassUrls.arcarum);
-    }
+    // ssr by class url
+    const getSSRClassUrl = (inputText) => {
+        switch (inputText) {
+            case "火":
+            case "火屬性SSR":
+                return Urls_1.EClassUrls.fire;
+            case "水":
+            case "水屬性SSR":
+                return Urls_1.EClassUrls.water;
+            case "土":
+            case "土屬性SSR":
+                return Urls_1.EClassUrls.soil;
+            case "風":
+            case "風屬性SSR":
+                return Urls_1.EClassUrls.wind;
+            case "光":
+            case "光屬性SSR":
+                return Urls_1.EClassUrls.light;
+            case "暗":
+            case "暗屬性SSR":
+                return Urls_1.EClassUrls.dark;
+            case "十天眾":
+                return Urls_1.EClassUrls.theEternals;
+            case "十賢者":
+                return Urls_1.EClassUrls.arcarum;
+        }
+    };
+    let ssrClassUrl = getSSRClassUrl(event.message.text);
     //   reply
     switch (event.message.text.trim().toUpperCase()) {
         case "SSR":
@@ -214,6 +222,12 @@ function handleEvent(event) {
                 .catch(() => {
                 console.error();
             });
+        case "火":
+        case "水":
+        case "土":
+        case "風":
+        case "光":
+        case "暗":
         case "火屬性SSR":
         case "水屬性SSR":
         case "土屬性SSR":
@@ -239,14 +253,9 @@ function handleEvent(event) {
                                     type: "text",
                                     text: data.name,
                                     wrap: true,
-                                    contents: [
-                                        {
-                                            type: "span",
-                                            text: data.name,
-                                            weight: "bold",
-                                            size: "xl"
-                                        }
-                                    ]
+                                    weight: "bold",
+                                    size: "xl",
+                                    align: "center"
                                 }
                             ]
                         },
@@ -268,25 +277,54 @@ function handleEvent(event) {
                             layout: "vertical",
                             contents: [
                                 {
-                                    type: "text",
-                                    text: data.charaType,
-                                    size: "sm",
-                                    color: "#aaaaaa"
-                                }
-                            ]
-                        },
-                        footer: {
-                            type: "box",
-                            layout: "vertical",
-                            height: "100px",
-                            contents: [
+                                    type: "box",
+                                    layout: "baseline",
+                                    contents: [
+                                        {
+                                            type: "text",
+                                            text: `種族：${data.race}`,
+                                            color: "#007799",
+                                            contents: []
+                                        },
+                                        {
+                                            type: "text",
+                                            text: `Type：${data.charaType}`,
+                                            align: "end",
+                                            color: "#007799"
+                                        }
+                                    ]
+                                },
                                 {
-                                    type: "button",
-                                    action: {
-                                        type: "uri",
-                                        label: "続きを読む",
-                                        uri: data.url
-                                    }
+                                    type: "box",
+                                    layout: "baseline",
+                                    contents: [
+                                        {
+                                            type: "text",
+                                            text: `${data.hp}`,
+                                            color: "#00AA00"
+                                        },
+                                        {
+                                            type: "text",
+                                            text: `ATK：${data.attack}`,
+                                            color: "#E63F00"
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: "box",
+                                    layout: "baseline",
+                                    contents: [
+                                        {
+                                            type: "text",
+                                            text: "得意武器："
+                                        },
+                                        {
+                                            type: "text",
+                                            text: `${data.weapon[0]}${data.weapon[1] ? "、" : ""}${data.weapon[1] || ""}`,
+                                            flex: 2,
+                                            color: "#007799"
+                                        }
+                                    ]
                                 }
                             ]
                         },
@@ -297,7 +335,6 @@ function handleEvent(event) {
                         }
                     });
                 });
-                console.log("charaCard", charaCard);
             })
                 .then(() => {
                 if (charaCard.length > 10) {
@@ -324,7 +361,6 @@ function handleEvent(event) {
                         }
                     };
                 }
-                console.log("echo", echo);
             })
                 .finally(() => client.replyMessage(event.replyToken, echo))
                 .catch(err => {
