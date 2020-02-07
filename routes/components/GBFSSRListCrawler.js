@@ -17,7 +17,7 @@ function gbfSSRList() {
             });
             const page = await browser.newPage();
             await page.setDefaultNavigationTimeout(0);
-            await page.goto(Urls_1.default.GBFSSR);
+            await page.goto(Urls_1.EUrls.GBFSSR);
             let urls = await page.evaluate(() => {
                 let results = [];
                 let items = document.querySelectorAll("ul.list-1").item(8).children;

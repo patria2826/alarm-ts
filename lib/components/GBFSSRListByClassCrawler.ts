@@ -1,8 +1,8 @@
 import * as puppeteer from "puppeteer";
 import { IGBFSSRByClassList } from "./Interface";
-import EUrls from "./Urls";
+import { EClassUrls } from "./Urls";
 
-function GBFSSRListByClassCrawler() {
+function GBFSSRListByClassCrawler(classURL: EClassUrls) {
   return new Promise(async (resolve, reject) => {
     try {
       const browser = await puppeteer.launch({
@@ -17,7 +17,7 @@ function GBFSSRListByClassCrawler() {
       });
       const page = await browser.newPage();
       await page.setDefaultNavigationTimeout(0);
-      await page.goto(EUrls.GBFSSRFire);
+      await page.goto(classURL);
       let urls = await page.evaluate(() => {
         let results: IGBFSSRByClassList[] = [];
         let items = document

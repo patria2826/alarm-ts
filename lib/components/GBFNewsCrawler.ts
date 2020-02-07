@@ -1,6 +1,6 @@
 import * as puppeteer from "puppeteer";
 import { IGBFNews } from "./Interface";
-import EUrls from "./Urls";
+import { EUrls } from "./Urls";
 
 function getGBFLatestNews() {
   return new Promise(async (resolve, reject) => {

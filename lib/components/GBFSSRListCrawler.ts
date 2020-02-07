@@ -1,6 +1,6 @@
 import * as puppeteer from "puppeteer";
 import { IGBFSSRList } from "./Interface";
-import EUrls from "./Urls";
+import { EUrls, EClassUrls } from "./Urls";
 
 function gbfSSRList() {
   return new Promise(async (resolve, reject) => {

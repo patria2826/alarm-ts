@@ -9,7 +9,7 @@ import {
   IGBFSSRList,
   IGBFSSRByClassList
 } from "./components/Interface";
-import EUrls from "./components/Urls";
+import { EUrls, EClassUrls } from "./components/Urls";
 
 // user config
 const config: line.Config = {
@@ -55,6 +55,28 @@ function handleEvent(event: line.WebhookEvent) {
   // create a echoing text message
   let echo: line.Message | line.Message[];
 
+  // url
+  let ssrClassUrl: EClassUrls;
+  switch (event.message.text) {
+    case "火":
+      return (ssrClassUrl = EClassUrls.fire);
+    case "水":
+      return (ssrClassUrl = EClassUrls.water);
+    case "土":
+      return (ssrClassUrl = EClassUrls.soil);
+    case "風":
+      return (ssrClassUrl = EClassUrls.wind);
+    case "光":
+      return (ssrClassUrl = EClassUrls.light);
+    case "暗":
+      return (ssrClassUrl = EClassUrls.dark);
+    case "十天眾":
+      return (ssrClassUrl = EClassUrls.theEternals);
+    case "十賢者":
+      return (ssrClassUrl = EClassUrls.arcarum);
+  }
+
+  //   reply
   switch (event.message.text.trim().toUpperCase()) {
     case "SSR":
       const charaClass: line.FlexBox[] = [];
@@ -211,10 +233,17 @@ function handleEvent(event: line.WebhookEvent) {
         .catch(() => {
           console.error();
         });
-    case "FIRE":
     case "火":
+    case "水":
+    case "土":
+    case "風":
+    case "光":
+    case "暗":
+    case "十天眾":
+    case "十賢者":
       const charaCard: line.FlexBubble[] = [];
-      return GBFSSRListByClassCrawler()
+
+      return GBFSSRListByClassCrawler(ssrClassUrl)
         .then((result: IGBFSSRByClassList[]) => {
           return result;
         })
@@ -298,7 +327,7 @@ function handleEvent(event: line.WebhookEvent) {
             for (let i = 0; i < echoArrCnt; i++) {
               echo.push({
                 type: "flex",
-                altText: EUrls.GBFSSRFire,
+                altText: ssrClassUrl,
                 contents: {
                   type: "carousel",
                   contents: charaCard.slice(i * 10, i * 10 + 9)
@@ -308,7 +337,7 @@ function handleEvent(event: line.WebhookEvent) {
           } else {
             echo = {
               type: "flex",
-              altText: EUrls.GBFSSRFire,
+              altText: ssrClassUrl,
               contents: {
                 type: "carousel",
                 contents: charaCard

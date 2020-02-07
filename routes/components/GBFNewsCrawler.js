@@ -16,7 +16,7 @@ function getGBFLatestNews() {
                 ]
             });
             const page = await browser.newPage();
-            await page.goto(Urls_1.default.GBFNews);
+            await page.goto(Urls_1.EUrls.GBFNews);
             let urls = await page.evaluate(() => {
                 let results = [];
                 let items = document.querySelectorAll("article.scroll_show_box");
@@ -30,7 +30,7 @@ function getGBFLatestNews() {
                             url: item.children
                                 .item(1)
                                 .firstElementChild.children.item(1)
-                                .firstElementChild.getAttribute("href") || Urls_1.default.GBFNews,
+                                .firstElementChild.getAttribute("href") || Urls_1.EUrls.GBFNews,
                             text: item.children.item(1).firstElementChild.children.item(1)
                                 .firstElementChild.textContent,
                             thumbnailImg: item.children

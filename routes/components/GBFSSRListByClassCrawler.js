@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer = require("puppeteer");
-const Urls_1 = require("./Urls");
-function GBFSSRListByClassCrawler() {
+function GBFSSRListByClassCrawler(classURL) {
     return new Promise(async (resolve, reject) => {
         try {
             const browser = await puppeteer.launch({
@@ -17,7 +16,7 @@ function GBFSSRListByClassCrawler() {
             });
             const page = await browser.newPage();
             await page.setDefaultNavigationTimeout(0);
-            await page.goto(Urls_1.default.GBFSSRFire);
+            await page.goto(classURL);
             let urls = await page.evaluate(() => {
                 let results = [];
                 let items = document

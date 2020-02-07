@@ -37,6 +37,27 @@ function handleEvent(event) {
     console.log(`Received message: ${event.message.text}`);
     // create a echoing text message
     let echo;
+    // url
+    let ssrClassUrl;
+    switch (event.message.text) {
+        case "火":
+            return (ssrClassUrl = Urls_1.EClassUrls.fire);
+        case "水":
+            return (ssrClassUrl = Urls_1.EClassUrls.water);
+        case "土":
+            return (ssrClassUrl = Urls_1.EClassUrls.soil);
+        case "風":
+            return (ssrClassUrl = Urls_1.EClassUrls.wind);
+        case "光":
+            return (ssrClassUrl = Urls_1.EClassUrls.light);
+        case "暗":
+            return (ssrClassUrl = Urls_1.EClassUrls.dark);
+        case "十天眾":
+            return (ssrClassUrl = Urls_1.EClassUrls.theEternals);
+        case "十賢者":
+            return (ssrClassUrl = Urls_1.EClassUrls.arcarum);
+    }
+    //   reply
     switch (event.message.text.trim().toUpperCase()) {
         case "SSR":
             const charaClass = [];
@@ -71,7 +92,7 @@ function handleEvent(event) {
                 .then(() => {
                 echo = {
                     type: "flex",
-                    altText: Urls_1.default.GBFSSR,
+                    altText: Urls_1.EUrls.GBFSSR,
                     contents: {
                         type: "bubble",
                         header: {
@@ -182,7 +203,7 @@ function handleEvent(event) {
                 .then(() => {
                 echo = {
                     type: "flex",
-                    altText: Urls_1.default.GBFNews,
+                    altText: Urls_1.EUrls.GBFNews,
                     contents: {
                         type: "carousel",
                         contents: newsCard
@@ -193,10 +214,16 @@ function handleEvent(event) {
                 .catch(() => {
                 console.error();
             });
-        case "FIRE":
         case "火":
+        case "水":
+        case "土":
+        case "風":
+        case "光":
+        case "暗":
+        case "十天眾":
+        case "十賢者":
             const charaCard = [];
-            return GBFSSRListByClassCrawler_1.default()
+            return GBFSSRListByClassCrawler_1.default(ssrClassUrl)
                 .then((result) => {
                 return result;
             })
@@ -279,7 +306,7 @@ function handleEvent(event) {
                     for (let i = 0; i < echoArrCnt; i++) {
                         echo.push({
                             type: "flex",
-                            altText: Urls_1.default.GBFSSRFire,
+                            altText: ssrClassUrl,
                             contents: {
                                 type: "carousel",
                                 contents: charaCard.slice(i * 10, i * 10 + 9)
@@ -290,7 +317,7 @@ function handleEvent(event) {
                 else {
                     echo = {
                         type: "flex",
-                        altText: Urls_1.default.GBFSSRFire,
+                        altText: ssrClassUrl,
                         contents: {
                             type: "carousel",
                             contents: charaCard
