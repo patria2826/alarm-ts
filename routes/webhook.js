@@ -276,7 +276,7 @@ function handleEvent(event) {
                 if (charaCard.length > 10) {
                     const echoArrCnt = Math.ceil(charaCard.length / 10);
                     echo = [];
-                    for (let i = 0; i++; i < echoArrCnt) {
+                    for (let i = 0; i < echoArrCnt; i++) {
                         charaCard.slice();
                         echo.push({
                             type: "flex",
