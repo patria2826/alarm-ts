@@ -26,8 +26,11 @@ function GBFSSRListByClassCrawler() {
                 const count = items.length;
                 for (let i = 0; i < count; i++) {
                     results.push({
-                        // text: items.item(i).textContent,
-                        // url: items.item(i).firstElementChild.getAttribute("href"),
+                        name: items.item(i).children.item(2).firstElementChild.textContent,
+                        url: items
+                            .item(i)
+                            .children.item(2)
+                            .firstElementChild.getAttribute("href"),
                         thumbnailImg: items
                             .item(i)
                             .children.item(1)
