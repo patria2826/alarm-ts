@@ -4,6 +4,7 @@ const line = require("@line/bot-sdk");
 const express = require("express");
 const GBFNewsCrawler_1 = require("./components/GBFNewsCrawler");
 const GBFSSRListCrawler_1 = require("./components/GBFSSRListCrawler");
+const GBFSSRListByClassCrawler_1 = require("./components/GBFSSRListByClassCrawler");
 const Urls_1 = require("./components/Urls");
 // user config
 const config = {
@@ -195,7 +196,7 @@ function handleEvent(event) {
         case "FIRE":
         case "火":
             const charaCard = [];
-            return GBFNewsCrawler_1.default()
+            return GBFSSRListByClassCrawler_1.default()
                 .then((result) => {
                 return result;
             })

@@ -214,7 +214,7 @@ function handleEvent(event: line.WebhookEvent) {
     case "FIRE":
     case "火":
       const charaCard: line.FlexBubble[] = [];
-      return getGBFLatestNews()
+      return GBFSSRListByClassCrawler()
         .then((result: IGBFSSRByClassList[]) => {
           return result;
         })
