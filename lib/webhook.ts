@@ -298,10 +298,11 @@ function handleEvent(event: line.WebhookEvent) {
               contents: newsCard
             }
           };
+          console.log("echo", echo);
         })
         .finally(() => client.replyMessage(event.replyToken, echo))
-        .catch(() => {
-          console.error();
+        .catch(err => {
+          console.error(err);
         });
     default:
       echo = {
