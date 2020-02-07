@@ -40,17 +40,17 @@ function handleEvent(event) {
     // url
     let ssrClassUrl;
     switch (event.message.text) {
-        case "火":
+        case "火屬性SSR":
             return (ssrClassUrl = Urls_1.EClassUrls.fire);
-        case "水":
+        case "水屬性SSR":
             return (ssrClassUrl = Urls_1.EClassUrls.water);
-        case "土":
+        case "土屬性SSR":
             return (ssrClassUrl = Urls_1.EClassUrls.soil);
-        case "風":
+        case "風屬性SSR":
             return (ssrClassUrl = Urls_1.EClassUrls.wind);
-        case "光":
+        case "光屬性SSR":
             return (ssrClassUrl = Urls_1.EClassUrls.light);
-        case "暗":
+        case "暗屬性SSR":
             return (ssrClassUrl = Urls_1.EClassUrls.dark);
         case "十天眾":
             return (ssrClassUrl = Urls_1.EClassUrls.theEternals);
@@ -214,12 +214,12 @@ function handleEvent(event) {
                 .catch(() => {
                 console.error();
             });
-        case "火":
-        case "水":
-        case "土":
-        case "風":
-        case "光":
-        case "暗":
+        case "火屬性SSR":
+        case "水屬性SSR":
+        case "土屬性SSR":
+        case "風屬性SSR":
+        case "光屬性SSR":
+        case "暗屬性SSR":
         case "十天眾":
         case "十賢者":
             const charaCard = [];
