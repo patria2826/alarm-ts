@@ -1,5 +1,6 @@
 import * as line from "@line/bot-sdk";
 import * as express from "express";
+import axios from "axios";
 import getGBFLatestNews from "./components/GBFNewsCrawler";
 import gbfSSRList from "./components/GBFSSRListCrawler";
 import { IGBFNews, IGBFSSRList } from "./components/Interface";
@@ -109,7 +110,10 @@ function handleEvent(event: line.WebhookEvent) {
             }
           };
         })
-        .finally(() => client.replyMessage(event.replyToken, echo));
+        .finally(() => client.replyMessage(event.replyToken, echo))
+        .catch(() => {
+          console.error();
+        });
     case "NEWS":
     case "公告":
       const newsCard: line.FlexBubble[] = [];
@@ -198,7 +202,27 @@ function handleEvent(event: line.WebhookEvent) {
             }
           };
         })
-        .finally(() => client.replyMessage(event.replyToken, echo));
+        .finally(() => client.replyMessage(event.replyToken, echo))
+        .catch(() => {
+          console.error();
+        });
+    case "FIRE":
+    case "火":
+      axios
+        .get(
+          "https://gbfssrlistbyod.memo.wiki/d/%b2%d0%d6%a4%c0%ad%bc%e7%ca%c7"
+        )
+        .then(response => console.log("response", response))
+        .catch(err => {
+          console.log(err);
+        })
+        .then(() => {
+          echo = {
+            type: "text",
+            text: "Yooooo"
+          };
+        });
+      return client.replyMessage(event.replyToken, echo);
     default:
       echo = {
         type: "text",

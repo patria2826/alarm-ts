@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const line = require("@line/bot-sdk");
 const express = require("express");
+const axios_1 = require("axios");
 const GBFNewsCrawler_1 = require("./components/GBFNewsCrawler");
 const GBFSSRListCrawler_1 = require("./components/GBFSSRListCrawler");
 const Urls_1 = require("./components/Urls");
@@ -96,7 +97,10 @@ function handleEvent(event) {
                     }
                 };
             })
-                .finally(() => client.replyMessage(event.replyToken, echo));
+                .finally(() => client.replyMessage(event.replyToken, echo))
+                .catch(() => {
+                console.error();
+            });
         case "NEWS":
         case "公告":
             const newsCard = [];
@@ -185,7 +189,25 @@ function handleEvent(event) {
                     }
                 };
             })
-                .finally(() => client.replyMessage(event.replyToken, echo));
+                .finally(() => client.replyMessage(event.replyToken, echo))
+                .catch(() => {
+                console.error();
+            });
+        case "FIRE":
+        case "火":
+            axios_1.default
+                .get("https://gbfssrlistbyod.memo.wiki/d/%b2%d0%d6%a4%c0%ad%bc%e7%ca%c7")
+                .then(response => console.log("response", response))
+                .catch(err => {
+                console.log(err);
+            })
+                .then(() => {
+                echo = {
+                    type: "text",
+                    text: "Yooooo"
+                };
+            });
+            return client.replyMessage(event.replyToken, echo);
         default:
             echo = {
                 type: "text",
