@@ -296,13 +296,12 @@ function handleEvent(event: line.WebhookEvent) {
             const echoArrCnt = Math.ceil(charaCard.length / 10);
             echo = [];
             for (let i = 0; i < echoArrCnt; i++) {
-              charaCard.slice();
               echo.push({
                 type: "flex",
                 altText: EUrls.GBFSSRFire,
                 contents: {
                   type: "carousel",
-                  contents: charaCard.slice(i, i + 9)
+                  contents: charaCard.slice(i * 10, i * 10 + 9)
                 }
               });
             }
