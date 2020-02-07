@@ -217,10 +217,10 @@ function handleEvent(event: line.WebhookEvent) {
           console.log(err);
         })
         .then(() => {
-          echo = {
+          return (echo = {
             type: "text",
             text: "Yooooo"
-          };
+          });
         });
       return client.replyMessage(event.replyToken, echo);
     default:
