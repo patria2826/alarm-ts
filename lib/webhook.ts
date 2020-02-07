@@ -288,14 +288,16 @@ function handleEvent(event: line.WebhookEvent) {
               }
             });
           });
+
+          console.log("charaCard", charaCard);
         })
         .then(() => {
           echo = {
             type: "flex",
-            altText: EUrls.GBFNews,
+            altText: EUrls.GBFSSRFire,
             contents: {
               type: "carousel",
-              contents: newsCard
+              contents: charaCard
             }
           };
           console.log("echo", echo);

@@ -269,14 +269,15 @@ function handleEvent(event) {
                         }
                     });
                 });
+                console.log("charaCard", charaCard);
             })
                 .then(() => {
                 echo = {
                     type: "flex",
-                    altText: Urls_1.default.GBFNews,
+                    altText: Urls_1.default.GBFSSRFire,
                     contents: {
                         type: "carousel",
-                        contents: newsCard
+                        contents: charaCard
                     }
                 };
                 console.log("echo", echo);
