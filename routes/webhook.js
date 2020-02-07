@@ -273,14 +273,31 @@ function handleEvent(event) {
                 console.log("charaCard", charaCard);
             })
                 .then(() => {
-                echo = {
-                    type: "flex",
-                    altText: Urls_1.default.GBFSSRFire,
-                    contents: {
-                        type: "carousel",
-                        contents: charaCard
+                if (charaCard.length > 10) {
+                    const echoArrCnt = Math.ceil(charaCard.length / 10);
+                    echo = [];
+                    for (let i = 0; i++; i < echoArrCnt) {
+                        charaCard.slice();
+                        echo.push({
+                            type: "flex",
+                            altText: Urls_1.default.GBFSSRFire,
+                            contents: {
+                                type: "carousel",
+                                contents: charaCard.slice(i, i + 9)
+                            }
+                        });
                     }
-                };
+                }
+                else {
+                    echo = {
+                        type: "flex",
+                        altText: Urls_1.default.GBFSSRFire,
+                        contents: {
+                            type: "carousel",
+                            contents: charaCard
+                        }
+                    };
+                }
                 console.log("echo", echo);
             })
                 .finally(() => client.replyMessage(event.replyToken, echo))

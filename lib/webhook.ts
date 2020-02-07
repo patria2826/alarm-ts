@@ -53,7 +53,7 @@ function handleEvent(event: line.WebhookEvent) {
   console.log(`Received message: ${event.message.text}`);
 
   // create a echoing text message
-  let echo: line.Message;
+  let echo: line.Message | line.Message[];
 
   switch (event.message.text.trim().toUpperCase()) {
     case "SSR":
@@ -292,14 +292,30 @@ function handleEvent(event: line.WebhookEvent) {
           console.log("charaCard", charaCard);
         })
         .then(() => {
-          echo = {
-            type: "flex",
-            altText: EUrls.GBFSSRFire,
-            contents: {
-              type: "carousel",
-              contents: charaCard
+          if (charaCard.length > 10) {
+            const echoArrCnt = Math.ceil(charaCard.length / 10);
+            echo = [];
+            for (let i = 0; i++; i < echoArrCnt) {
+              charaCard.slice();
+              echo.push({
+                type: "flex",
+                altText: EUrls.GBFSSRFire,
+                contents: {
+                  type: "carousel",
+                  contents: charaCard.slice(i, i + 9)
+                }
+              });
             }
-          };
+          } else {
+            echo = {
+              type: "flex",
+              altText: EUrls.GBFSSRFire,
+              contents: {
+                type: "carousel",
+                contents: charaCard
+              }
+            };
+          }
           console.log("echo", echo);
         })
         .finally(() => client.replyMessage(event.replyToken, echo))
