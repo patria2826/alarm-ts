@@ -26,15 +26,15 @@ function GBFSSRListByClassCrawler() {
                 const count = items.length;
                 for (let i = 0; i < count; i++) {
                     results.push({
+                        thumbnailImg: items
+                            .item(i)
+                            .children.item(1)
+                            .firstElementChild.getAttribute("src"),
                         name: items.item(i).children.item(2).firstElementChild.textContent,
                         url: items
                             .item(i)
                             .children.item(2)
                             .firstElementChild.getAttribute("href"),
-                        thumbnailImg: items
-                            .item(i)
-                            .children.item(1)
-                            .firstElementChild.getAttribute("src"),
                         charaType: items.item(i).children.item(4).textContent,
                         race: items.item(i).children.item(5).textContent,
                         weapon: [

@@ -10,3 +10,14 @@ export interface IGBFSSRList {
   text: string;
   thumbnailImg: string;
 }
+
+export interface IGBFSSRByClassList {
+  thumbnailImg: string;
+  name: string;
+  url: string;
+  charaType: string;
+  race: string;
+  weapon: [string, string];
+  hp: string;
+  attack: string;
+}

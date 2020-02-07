@@ -4,7 +4,6 @@ const line = require("@line/bot-sdk");
 const express = require("express");
 const GBFNewsCrawler_1 = require("./components/GBFNewsCrawler");
 const GBFSSRListCrawler_1 = require("./components/GBFSSRListCrawler");
-const GBFSSRListByClassCrawler_1 = require("./components/GBFSSRListByClassCrawler");
 const Urls_1 = require("./components/Urls");
 // user config
 const config = {
@@ -195,18 +194,96 @@ function handleEvent(event) {
             });
         case "FIRE":
         case "火":
-            GBFSSRListByClassCrawler_1.default()
-                .then(result => {
+            const charaCard = [];
+            return GBFNewsCrawler_1.default()
+                .then((result) => {
                 return result;
             })
-                .then(data => {
-                console.log("data", data);
+                .then((dataList) => {
+                dataList.forEach(data => {
+                    charaCard.push({
+                        type: "bubble",
+                        header: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
+                                {
+                                    type: "text",
+                                    text: data.name,
+                                    wrap: true,
+                                    contents: [
+                                        {
+                                            type: "span",
+                                            text: data.name,
+                                            weight: "bold",
+                                            size: "xl"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        hero: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
+                                {
+                                    type: "image",
+                                    url: data.thumbnailImg,
+                                    size: "full",
+                                    aspectMode: "fit",
+                                    aspectRatio: "2:1"
+                                }
+                            ]
+                        },
+                        body: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
+                                {
+                                    type: "text",
+                                    text: data.charaType,
+                                    size: "sm",
+                                    color: "#aaaaaa"
+                                }
+                            ]
+                        },
+                        footer: {
+                            type: "box",
+                            layout: "vertical",
+                            height: "100px",
+                            contents: [
+                                {
+                                    type: "button",
+                                    action: {
+                                        type: "uri",
+                                        label: "続きを読む",
+                                        uri: data.url
+                                    }
+                                }
+                            ]
+                        },
+                        action: {
+                            type: "uri",
+                            label: data.name,
+                            uri: data.url
+                        }
+                    });
+                });
+            })
+                .then(() => {
+                echo = {
+                    type: "flex",
+                    altText: Urls_1.default.GBFNews,
+                    contents: {
+                        type: "carousel",
+                        contents: newsCard
+                    }
+                };
+            })
+                .finally(() => client.replyMessage(event.replyToken, echo))
+                .catch(() => {
+                console.error();
             });
-            echo = {
-                type: "text",
-                text: "Yooooo"
-            };
-            return client.replyMessage(event.replyToken, echo);
         default:
             echo = {
                 type: "text",

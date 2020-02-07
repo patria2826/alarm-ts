@@ -1,5 +1,5 @@
 import * as puppeteer from "puppeteer";
-import { IGBFSSRList } from "./Interface";
+import { IGBFSSRByClassList } from "./Interface";
 import EUrls from "./Urls";
 
 function GBFSSRListByClassCrawler() {
@@ -19,22 +19,22 @@ function GBFSSRListByClassCrawler() {
       await page.setDefaultNavigationTimeout(0);
       await page.goto(EUrls.GBFSSRFire);
       let urls = await page.evaluate(() => {
-        let results: any[] = [];
+        let results: IGBFSSRByClassList[] = [];
         let items = document
           .getElementById("table_edit_1 content_block_1")
           .children.item(1).children;
         const count = items.length;
         for (let i = 0; i < count; i++) {
           results.push({
+            thumbnailImg: items
+              .item(i)
+              .children.item(1)
+              .firstElementChild.getAttribute("src"),
             name: items.item(i).children.item(2).firstElementChild.textContent,
             url: items
               .item(i)
               .children.item(2)
               .firstElementChild.getAttribute("href"),
-            thumbnailImg: items
-              .item(i)
-              .children.item(1)
-              .firstElementChild.getAttribute("src"),
             charaType: items.item(i).children.item(4).textContent,
             race: items.item(i).children.item(5).textContent,
             weapon: [

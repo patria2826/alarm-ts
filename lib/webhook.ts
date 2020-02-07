@@ -4,7 +4,11 @@ import axios from "axios";
 import getGBFLatestNews from "./components/GBFNewsCrawler";
 import gbfSSRList from "./components/GBFSSRListCrawler";
 import GBFSSRListByClassCrawler from "./components/GBFSSRListByClassCrawler";
-import { IGBFNews, IGBFSSRList } from "./components/Interface";
+import {
+  IGBFNews,
+  IGBFSSRList,
+  IGBFSSRByClassList
+} from "./components/Interface";
 import EUrls from "./components/Urls";
 
 // user config
@@ -209,18 +213,96 @@ function handleEvent(event: line.WebhookEvent) {
         });
     case "FIRE":
     case "火":
-      GBFSSRListByClassCrawler()
-        .then(result => {
+      const charaCard: line.FlexBubble[] = [];
+      return getGBFLatestNews()
+        .then((result: IGBFSSRByClassList[]) => {
           return result;
         })
-        .then(data => {
-          console.log("data", data);
+        .then((dataList: IGBFSSRByClassList[]) => {
+          dataList.forEach(data => {
+            charaCard.push({
+              type: "bubble",
+              header: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                  {
+                    type: "text",
+                    text: data.name,
+                    wrap: true,
+                    contents: [
+                      {
+                        type: "span",
+                        text: data.name,
+                        weight: "bold",
+                        size: "xl"
+                      }
+                    ]
+                  }
+                ]
+              },
+              hero: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                  {
+                    type: "image",
+                    url: data.thumbnailImg,
+                    size: "full",
+                    aspectMode: "fit",
+                    aspectRatio: "2:1"
+                  }
+                ]
+              },
+              body: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                  {
+                    type: "text",
+                    text: data.charaType,
+                    size: "sm",
+                    color: "#aaaaaa"
+                  }
+                ]
+              },
+              footer: {
+                type: "box",
+                layout: "vertical",
+                height: "100px",
+                contents: [
+                  {
+                    type: "button",
+                    action: {
+                      type: "uri",
+                      label: "続きを読む",
+                      uri: data.url
+                    }
+                  }
+                ]
+              },
+              action: {
+                type: "uri",
+                label: data.name,
+                uri: data.url
+              }
+            });
+          });
+        })
+        .then(() => {
+          echo = {
+            type: "flex",
+            altText: EUrls.GBFNews,
+            contents: {
+              type: "carousel",
+              contents: newsCard
+            }
+          };
+        })
+        .finally(() => client.replyMessage(event.replyToken, echo))
+        .catch(() => {
+          console.error();
         });
-      echo = {
-        type: "text",
-        text: "Yooooo"
-      };
-      return client.replyMessage(event.replyToken, echo);
     default:
       echo = {
         type: "text",
