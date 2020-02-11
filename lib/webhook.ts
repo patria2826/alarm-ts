@@ -319,7 +319,7 @@ function handleEvent(event: line.WebhookEvent) {
                     contents: [
                       {
                         type: "text",
-                        text: `${data.hp}`,
+                        text: `HP：${data.hp}`,
                         color: "#00AA00"
                       },
                       {
